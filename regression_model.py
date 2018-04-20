@@ -47,6 +47,12 @@ class RegressionModelPredictor:
         '''
         data = json.loads(s)
 
+<<<<<<< HEAD
+=======
+        weights = np.asarray(data['weights'])
+        bias = data['bias']
+
+>>>>>>> dcfa28bbccdec03a2e13d36d07e60a64fe82e0d0
         params = dict([(param_name, data[param_name]) for param_name in cls.get_params()])
         for param_name, param_value in params.items():
             if isinstance(param_value, (tuple, list)):
