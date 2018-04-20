@@ -15,7 +15,7 @@ from argparse import ArgumentParser
 from csv_utils import csv_to_array
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
-
+from inspect import getmembers
 
 class LinearRegressionPredictor:
     def __init__(self, weights, bias):
@@ -42,20 +42,32 @@ class LinearRegressionPredictor:
     def bias(self, value):
         self.model.intercept_ = value
 
-
+    @staticmethod
+    def get_params():
+        return 'weights', 'bias'
 
     def to_string(self):
-        return json.dumps({
-            'weights' : self.weights.tolist(),
-            'bias' : self.bias
-        })
+        members = dict(getmembers(self))
+        params = dict([(param_name, members[param_name]) for param_name in self.get_params()])
+        for param_name, param_value in params.items():
+            if isinstance(param_value, np.ndarray):
+                params[param_name] = param_value.tolist()
+
+        return json.dumps(params)
 
     @classmethod
     def from_string(cls, s):
         data = json.loads(s)
+
         weights = np.asarray(data['weights'])
         bias = data['bias']
-        return cls(weights, bias)
+
+        params = dict([(param_name, data[param_name]) for param_name in cls.get_params()])
+        for param_name, param_value in params.items():
+            if isinstance(param_value, (tuple, list)):
+                params[param_name] = np.asarray(param_value)
+
+        return cls(**params)
 
 
     def __str__(self):
@@ -202,7 +214,7 @@ class LinearRegression:
 
 
 class LinearRegressionCmd(ArgumentParser):
-    def __init__(self, description):
+    def __init__(self, description = None):
         if description is None:
             description = 'Creates a linear regression model using a training data set ' \
                           'and test it with some examples'

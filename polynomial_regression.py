@@ -8,33 +8,19 @@ from sys import argv
 class PolynomialRegressionPredictor(LinearRegressionPredictor):
     def __init__(self, weights, bias, degrees, interaction_only):
         super().__init__(weights, bias)
-        self.degree = degrees
+        self.degrees = degrees
         self.interaction_only = interaction_only
 
     def predict(self, X):
-        return super().predict( PolynomialFeatures(self.degree, self.interaction_only).fit_transform(X) )
+        return super().predict( PolynomialFeatures(self.degrees, self.interaction_only).fit_transform(X) )
 
-
-    def to_string(self):
-        return json.dumps({
-            'weights' : self.weights.tolist(),
-            'bias' : self.bias,
-            'degree' : self.degree,
-            'interaction_only' : self.interaction_only
-        })
-
-    @classmethod
-    def from_string(cls, s):
-        data = json.loads(s)
-        weights = np.asarray(data['weights'])
-        bias = data['bias']
-        degree = data['degree']
-        interaction_only = data['interaction_only']
-        return cls(weights, bias, degree, interaction_only)
-
+    @staticmethod
+    def get_params():
+        return 'weights', 'bias', 'interaction_only', 'degrees'
 
     def __str__(self):
-        '{}, max.degree = {}, interaction_only = {}'.format(super().__str__(), self.degree, self.interaction_only)
+        return '{}, max.degree = {}, interaction_only = {}'.format(super().__str__(), self.degrees, self.interaction_only)
+
 
 
 class PolynomialRegression(LinearRegression):
@@ -48,7 +34,7 @@ class PolynomialRegression(LinearRegression):
     def __init__(self, model_type, degrees = 2, interaction_only = False, **kwargs):
         '''
         Inicializa una instancia de esta clase
-        :param degree: Es el máximo exponente que pueda tener una característica de los ejemplos del modelo.
+        :param degrees: Es el máximo exponente que pueda tener una característica de los ejemplos del modelo.
         Si por ejemplo, este parámetro se establece a 3. Se utilizarán las caracteristicas x1, x1^2, x1^3,
         x2, x2^2, x2^3, ....
         Debe ser un valor entero positivo mayor que cero. Por defecto es 2
@@ -58,16 +44,16 @@ class PolynomialRegression(LinearRegression):
         '''
 
         super().__init__(model_type, **kwargs)
-        self.degree = degrees
+        self.degrees = degrees
         self.interaction_only = interaction_only
 
     def train(self, X, Y):
-        super().train( PolynomialFeatures(self.degree, self.interaction_only).fit_transform(X), Y )
+        super().train( PolynomialFeatures(self.degrees, self.interaction_only).fit_transform(X), Y )
 
 
     @property
     def predictor(self):
-        return PolynomialRegressionPredictor(self.weights, self.bias, self.degree, self.interaction_only)
+        return PolynomialRegressionPredictor(self.weights, self.bias, self.degrees, self.interaction_only)
 
 
 
