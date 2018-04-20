@@ -15,10 +15,12 @@ from argparse import ArgumentParser
 from csv_utils import csv_to_array
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
-from inspect import getmembers
+from regression_model import RegressionModelPredictor, RegressionModel
 
-class LinearRegressionPredictor:
+
+class LinearRegressionPredictor(RegressionModelPredictor):
     def __init__(self, weights, bias):
+        super().__init__()
         self.model = linear_model.LinearRegression()
         self.weights = weights
         self.bias = bias
@@ -46,29 +48,6 @@ class LinearRegressionPredictor:
     def get_params():
         return 'weights', 'bias'
 
-    def to_string(self):
-        members = dict(getmembers(self))
-        params = dict([(param_name, members[param_name]) for param_name in self.get_params()])
-        for param_name, param_value in params.items():
-            if isinstance(param_value, np.ndarray):
-                params[param_name] = param_value.tolist()
-
-        return json.dumps(params)
-
-    @classmethod
-    def from_string(cls, s):
-        data = json.loads(s)
-
-        weights = np.asarray(data['weights'])
-        bias = data['bias']
-
-        params = dict([(param_name, data[param_name]) for param_name in cls.get_params()])
-        for param_name, param_value in params.items():
-            if isinstance(param_value, (tuple, list)):
-                params[param_name] = np.asarray(param_value)
-
-        return cls(**params)
-
 
     def __str__(self):
         return 'weights=[{}], bias={}'.format(','.join([str(value) for value in self.weights]), self.bias)
@@ -77,9 +56,12 @@ class LinearRegressionPredictor:
         return str(self)
 
 
-class LinearRegression:
+
+class LinearRegression(RegressionModel):
     @accepts(object, ('normal', 'ridge', 'lasso', 'elasticnet'))
     def __init__(self, model_type, alpha = None, l1_ratio = None, **kwargs):
+        super().__init__()
+
         '''
         Instancia un modelo de regresión lineal. En función del parámetro model_type, se usará una técnica distinta
         para ajustar el modelo con respecto al conjunto de entrenamiento.
@@ -136,9 +118,8 @@ class LinearRegression:
         self.model = model_cls(**model_params)
 
         # Valores por defecto de algunos atributos
-        self.is_trained = False
         self.model_type = model_type
-        self._predictor = None
+
 
     def train(self, X, Y):
         '''
@@ -150,18 +131,7 @@ class LinearRegression:
         :return:
         '''
         self.model.fit(X, Y)
-        self.is_trained = True
-
-
-    def predict(self, X):
-        '''
-        Predice el valor de salida (o clase) asociada a un ejemplo o varios.
-        :param X: Es una matriz numpy de tamaño pxm, p > 0, m > 0. Donde m es el número de caracteristicas de
-        cada ejemplo.
-        :return: Devuelve una lista de p-elementos. El elemento i-ésimo es la predicción del modelo sobre el
-        ejemplo i-ésimo del conjunto X pasado como parámetro.
-        '''
-        return self.predictor.predict(X)
+        super().train(X, Y)
 
 
 
@@ -198,6 +168,7 @@ class LinearRegression:
         self.model.intercept_ = value
         if hasattr(self.model, 'coef_'):
             self.is_trained = True
+
 
     @property
     def predictor(self):
