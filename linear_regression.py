@@ -202,9 +202,11 @@ class LinearRegression:
 
 
 class LinearRegressionCmd(ArgumentParser):
-    def __init__(self):
-        super().__init__(description = 'Creates a linear regression model using a training data set'
-                                          ' and test it with some test examples')
+    def __init__(self, description):
+        if description is None:
+            description = 'Creates a linear regression model using a training data set ' \
+                          'and test it with some examples'
+        super().__init__(description = description)
 
         self.add_argument('-tr', '--train', help = 'File with training data set examples in .csv format (comma separated values). The expected model value for each example is the las column of the data', metavar = 'FILE', required = True)
         self.add_argument('-tst', '--test', help = 'File with test examples in .csv format (comma separated). The expected model value for each example is the las column of the data', metavar = 'FILE', required = True)

@@ -73,7 +73,8 @@ class PolynomialRegression(LinearRegression):
 
 class PolynomialRegressionCmd(LinearRegressionCmd):
     def __init__(self):
-        super().__init__()
+        super().__init__(description = 'Builds a polynomial regression model using the specified training data set'
+                                       'and test it with some examples')
         self.add_argument('-d', '--degrees', help = 'Indicates maximum exponent of a generated characteristic that will be used for this model. By default is 2', type = int, metavar = 'DEGREES')
         self.add_argument('-i', '--interaction-only', help = 'Indicates that only products of at most degrees distinct features will be used as input for the model', action = 'store_true')
 
