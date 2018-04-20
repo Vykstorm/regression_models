@@ -6,6 +6,8 @@ import numpy as np
 from sys import argv
 
 class PolynomialRegressionPredictor(LinearRegressionPredictor):
+    name = 'polynomial'
+
     def __init__(self, weights, bias, degrees, interaction_only):
         super().__init__(weights, bias)
         self.degrees = degrees

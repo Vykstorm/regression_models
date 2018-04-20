@@ -19,6 +19,8 @@ from regression_model import RegressionModelPredictor, RegressionModel
 
 
 class LinearRegressionPredictor(RegressionModelPredictor):
+    name = 'linear'
+
     def __init__(self, weights, bias):
         super().__init__()
         self.model = linear_model.LinearRegression()

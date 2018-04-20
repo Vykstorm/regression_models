@@ -4,12 +4,15 @@ import numpy as np
 import json
 
 class RegressionModelPredictor:
+    name = ''
+
     '''
     Las instancias de esta clase poseen toda la información necesaria para generar un modelo de regresión
     sin supervisión (sin aprendizaje previo)
     '''
     def __init__(self):
         pass
+
 
     @staticmethod
     def get_params():
@@ -35,10 +38,13 @@ class RegressionModelPredictor:
             if isinstance(param_value, np.ndarray):
                 params[param_name] = param_value.tolist()
 
-        return json.dumps(params)
+        return json.dumps({
+            'type' : self.__class__.name,
+            'params' : params
+        })
 
-    @classmethod
-    def from_string(cls, s):
+    @staticmethod
+    def from_string(s):
         '''
         Recupera una instancia de esta clase a partir de una cadena de caracteres generada previamente usando
         el método to_string()
@@ -46,8 +52,14 @@ class RegressionModelPredictor:
         :return:
         '''
         data = json.loads(s)
+        regression_type = data['type']
 
-        params = dict([(param_name, data[param_name]) for param_name in cls.get_params()])
+        from linear_regression import LinearRegressionPredictor as Linear
+        from polynomial_regression import PolynomialRegressionPredictor as Polynomial
+        classes = dict([(cls.name, cls) for cls in (Linear, Polynomial)])
+        cls = classes[regression_type]
+
+        params = dict([(param_name, data['params'][param_name]) for param_name in cls.get_params()])
         for param_name, param_value in params.items():
             if isinstance(param_value, (tuple, list)):
                 params[param_name] = np.asarray(param_value)
