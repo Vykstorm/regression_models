@@ -233,7 +233,7 @@ class LinearRegressionCmd(ArgumentParser):
 
         try:
             with open(train_file, 'r') as file:
-                train_data = csv_to_array(file.read())
+                train_data = np.array(csv_to_array(file.read()))
 
             if train_data.shape[0] == 0 or train_data.shape[1] < 2:
                 raise Exception()
@@ -267,6 +267,7 @@ class LinearRegressionCmd(ArgumentParser):
     def _plot_data(self, train_data, test_data, test_predictions):
         plt.scatter(train_data[:, :-1], train_data[:, -1], linewidth=1, color='blue', s=1, label='Training data',
                     marker='.')
+
         plt.plot(test_data[:, :-1], test_predictions, linewidth=2, color='red', label='linear regressor')
         plt.xlabel('Input data')
         plt.ylabel('Response')
@@ -302,6 +303,7 @@ class LinearRegressionCmd(ArgumentParser):
 
         # Predecimos los valores para los ejemplos del conjunto de entrenamiento
         Y = model.predict(test_data[:, :-1])
+
 
         # Mostramos información resumida del modelo y resultados
         if print_summary:
