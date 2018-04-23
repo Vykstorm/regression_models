@@ -95,7 +95,7 @@ class RegressionModel:
         :return: Devuelve una lista de p-elementos. El elemento i-ésimo es la predicción del modelo sobre el
         ejemplo i-ésimo del conjunto X pasado como parámetro.
         '''
-        self.predictor.predict(X)
+        return self.predictor.predict(X)
 
 
     @property
