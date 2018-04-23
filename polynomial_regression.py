@@ -1,8 +1,6 @@
 
 from linear_regression import LinearRegression, LinearRegressionPredictor, LinearRegressionCmd
 from sklearn.preprocessing import PolynomialFeatures
-import json
-import numpy as np
 from sys import argv
 
 class PolynomialRegressionPredictor(LinearRegressionPredictor):
