@@ -14,6 +14,15 @@ class RegressionModelPredictor:
         pass
 
 
+    def predict(self, X):
+        '''
+        Predice usando este modelo, los valores asociados a los ejemplos que se pasan como parámetro.
+        :param X:
+        :return:
+        '''
+        raise NotImplementedError()
+
+
     @staticmethod
     def get_params():
         '''
